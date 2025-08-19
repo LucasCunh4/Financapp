@@ -1,0 +1,1063 @@
+:root {
+    --cor-fundo: #f4e3fd;
+    --cor-principal: #ffffff;
+    --cor-sombra: rgba(0, 0, 0, 0.05);
+    --cor-texto: #333;
+    --cor-texto-leve: #777;
+    --cor-borda: #e0e0e0;
+    --cor-primaria: #8a2be2;
+    --cor-primaria-hover: #7b24cb;
+    --cor-receita: #23d970;
+    --cor-despesa: #ff0000;
+    --cor-sucesso: #2ecc71;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { font-family: 'Poppins', sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); }
+
+.sidebar { background-color: var(--cor-primaria); color: #fff; width: 250px; height: 100vh; position: fixed; top: 0; left: -250px; transition: left 0.3s ease-in-out; z-index: 20; padding-top: 60px; }
+.sidebar.open { left: 0; }
+.sidebar nav ul { list-style: none; }
+.sidebar nav ul li { padding: 15px 30px; }
+.sidebar nav ul li a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
+
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; z-index: 15; }
+.overlay.active { opacity: 1; visibility: visible; }
+
+header { display: flex; align-items: center; margin-bottom: 20px; }
+.menu-toggle { width: 30px; cursor: pointer; margin-right: 20px; }
+.bar { width: 100%; height: 3px; background-color: var(--cor-texto); border-radius: 2px; margin: 5px 0; }
+.header-content h1 { font-size: 28px; font-weight: 700; }
+.header-content p { color: var(--cor-texto-leve); margin: 0; }
+
+.content { padding: 20px; width: 100%; }
+.app-container { width: 100%; max-width: 800px; margin: 0 auto; }
+.hidden { display: none !important; }
+
+.card { background-color: var(--cor-principal); border-radius: 15px; box-shadow: 0 4px 15px var(--cor-sombra); padding: 20px; margin-bottom: 20px; }
+.card h2 { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
+
+.resumo-container { display: flex; justify-content: space-between;align-items: center; }
+.resumo-card { text-align: center; flex: 1; }
+.resumo-card:not(:last-child) { border-right: 1px solid var(--cor-borda); padding-right: 15px; }
+.resumo-card:not(:first-child) { padding-left: 15px; }
+.resumo-card h4 { font-weight: 400; color: var(--cor-texto-leve); font-size: 14px; }
+.resumo-card .valor { font-size: 22px; font-weight: 700; }
+.resumo-card .valor.receita { color: var(--cor-receita); }
+.resumo-card .valor.despesa { color: var(--cor-despesa); }
+
+.transacoes-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 768px) { .transacoes-grid { grid-template-columns: 1fr 1fr; } }
+
+.form-control { margin-bottom: 15px; }
+.form-control label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+.form-control input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--cor-borda); font-family: 'Poppins', sans-serif; font-size: 14px; }
+
+.btn { width: 100%; padding: 12px; border: none; border-radius: 8px; background-color: var(--cor-primaria); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; }
+.btn:hover { background-color: var(--cor-primaria-hover); }
+.btn-success { background-color: var(--cor-sucesso) !important; cursor: default; }
+
+.transacoes { list-style-type: none; }
+.transacoes li { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }
+.transacoes li:not(:last-child) { border-bottom: 1px solid var(--cor-borda); }
+.transacoes span { font-weight: 600; }
+.transacoes li.receita span { color: var(--cor-receita); }
+.transacoes li.despesa span { color: var(--cor-despesa); }
+
+.month-navigator { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--cor-borda); }
+.month-navigator h2 { margin: 0; font-size: 18px; color: var(--cor-primaria); }
+.month-btn { background-color: transparent; border: 2px solid var(--cor-borda); border-radius: 50%; width: 35px; height: 35px; font-size: 20px; font-weight: bold; color: var(--cor-texto-leve); cursor: pointer; transition: all 0.2s ease; }
+.month-btn:hover { background-color: var(--cor-fundo); color: var(--cor-primaria); border-color: var(--cor-primaria); }
+
+/* --- ESTILOS DO BOTÃO FLUTUANTE (FAB) --- */
+.fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--cor-primaria);
+    color: white;
+    font-size: 36px;
+    line-height: 60px;
+    text-align: center;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s ease;
+}
+.fab:hover {
+    transform: scale(1.1);
+}
+
+/* --- ESTILOS DO MODAL --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 25;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: var(--cor-principal);
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--cor-texto-leve);
+    cursor: pointer;
+}
+
+/* Toggle de Receita/Despesa */
+.tipo-transacao-toggle {
+    display: flex;
+    margin-bottom: 20px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.tipo-transacao-toggle input[type="radio"] {
+    display: none;
+}
+.tipo-transacao-toggle label {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-weight: 600;
+}
+.tipo-transacao-toggle input[type="radio"]:checked + label {
+    background-color: var(--cor-primaria);
+    color: white;
+}
+
+/* Checkbox de Transação Fixa */
+.form-control-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.form-control-checkbox input[type="checkbox"] {
+    margin-right: 10px;
+    width: auto;
+}
+.form-control-checkbox label {
+    font-weight: 400;
+    margin: 0;
+}
+.opcoes-fixa {
+    background-color: var(--cor-fundo);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+/* --- Estilos dos Novos Campos e Detalhes --- */
+
+/* Estilo para o campo de observações */
+textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--cor-borda);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    resize: vertical; /* Permite que o usuário redimensione verticalmente */
+}
+
+/* Detalhes na lista de transações (Data e Observação) */
+.transaction-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.transaction-date {
+    font-size: 12px;
+    color: var(--cor-texto-leve);
+    font-weight: 400;
+}
+
+.transaction-observation {
+    font-size: 12px;
+    color: var(--cor-texto-leve);
+    margin-top: 4px;
+    font-style: italic;
+}
+/* --- Estilos do Agrupamento por Dia no Histórico --- */
+.day-group {
+    background-color: var(--cor-principal);
+    border: 1px solid var(--cor-borda);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.date-header {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cor-texto-leve);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+/* --- Estilos da Lista de Transações (CORRIGIDO) --- */
+.transacoes {
+    list-style-type: none;
+    padding: 0;
+}
+
+.transacoes li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* MUDANÇA AQUI: Adiciona 10px de padding nos lados esquerdo e direito */
+    padding: 8px 10px;
+    margin: 5px 0;
+    border-radius: 8px; /* Borda arredondada para todos os itens */
+}
+
+/* Regra para o valor em R$ dentro da lista */
+.transacoes span {
+    font-weight: 600;
+}
+
+/* Estilo específico para RECEITAS */
+.transacoes li.receita {
+    background-color: #d2ffd4; /* Fundo verde bem clarinho */
+    border-left: 4px solid var(--cor-receita); /* Borda laranja à esquerda */
+}
+
+.transacoes li.receita span {
+    color: var(--cor-receita); /* Cor do texto laranja */
+}
+
+/* Estilo específico para DESPESAS */
+.transacoes li.despesa {
+    background-color: #ffb2b2; /* Fundo vermelho bem clarinho */
+    border-left: 4px solid var(--cor-despesa); /* Borda vermelha à esquerda */
+}
+
+.transacoes li.despesa span {
+    color: var(--cor-despesa); /* Cor do texto vermelha */
+}
+
+/* Detalhes na lista (Data e Observação) */
+.transaction-info { flex: 1; }
+.transaction-details { display: flex; justify-content: space-between; align-items: center; }
+.transaction-date { font-size: 12px; color: var(--cor-texto-leve); font-weight: 400; }
+.transaction-observation { font-size: 12px; color: var(--cor-texto-leve); margin-top: 4px; font-style: italic; }
+
+// ===================================================================================
+// --- SELETORES GLOBAIS E ESTADO DO APLICATIVO ---
+// ===================================================================================
+const CHAVE_STORAGE = 'transacoes';
+let transacoes = carregarTransacoes();
+let dataVista = new Date();
+
+// Elementos da Interface Principal
+const sidebar = document.querySelector('.sidebar');
+const overlay = document.querySelector('.overlay');
+const menuToggleButton = document.querySelector('.menu-toggle');
+const headerTitle = document.getElementById('header-title');
+const headerSubtitle = document.getElementById('header-subtitle');
+
+// Páginas
+const pageDashboard = document.getElementById('page-dashboard');
+const pageTransacoes = document.getElementById('page-transacoes');
+const pageRelatorio = document.getElementById('page-relatorio');
+const pageConfiguracoes = document.getElementById('page-configuracoes');
+const todasAsPaginas = [pageDashboard, pageTransacoes, pageRelatorio, pageConfiguracoes];
+
+// Links de Navegação
+const navDashboard = document.getElementById('nav-dashboard');
+const navTransacoes = document.getElementById('nav-transacoes');
+const navRelatorio = document.getElementById('nav-relatorio');
+const navConfiguracoes = document.getElementById('nav-configuracoes');
+
+// Elementos do Dashboard
+const listaTransacoesRecentes = document.getElementById('transacoes-recentes');
+const totalReceitasElement = document.getElementById('total-receitas');
+const totalDespesasElement = document.getElementById('total-despesas');
+const saldoTotalElement = document.getElementById('saldo-total');
+
+// Elementos do Histórico
+const monthDisplay = document.getElementById('month-display');
+const prevMonthBtn = document.getElementById('prev-month-btn');
+const nextMonthBtn = document.getElementById('next-month-btn');
+const listaHistoricoCompleto = document.getElementById('lista-historico-completo');
+
+// Elementos do Relatório
+const relatorioContainer = document.getElementById('relatorio-container');
+
+// Elementos do Modal e FAB
+const fabAddTransacao = document.getElementById('fab-add-transacao');
+const modalTransacao = document.getElementById('modal-transacao');
+const closeModalBtn = document.getElementById('close-modal-btn');
+const formTransacao = document.getElementById('form-transacao');
+const btnAddTransacao = document.getElementById('btn-add-transacao');
+const checkTransacaoFixa = document.getElementById('transacao-fixa');
+const opcoesFixa = document.getElementById('opcoes-fixa');
+
+
+// ===================================================================================
+// --- FUNÇÕES DE LÓGICA E DADOS ---
+// ===================================================================================
+function carregarTransacoes() {
+    const transacoesSalvas = localStorage.getItem(CHAVE_STORAGE);
+    return JSON.parse(transacoesSalvas) || [];
+}
+
+function salvarTransacoes(transacoes) {
+    localStorage.setItem(CHAVE_STORAGE, JSON.stringify(transacoes));
+}
+
+function processarNovaTransacao(event) {
+    event.preventDefault();
+
+    const tipo = formTransacao.querySelector('input[name="tipo_transacao"]:checked').value;
+    const descricaoInput = document.getElementById('descricao');
+    const valorInput = document.getElementById('valor');
+    const observacoesInput = document.getElementById('observacoes');
+    const categoriaInput = document.getElementById('categoria');
+    const isFixa = document.getElementById('transacao-fixa').checked;
+    const isCartao = document.getElementById('cartao-credito').checked;
+    const mesesInput = document.getElementById('meses');
+
+    let valor = parseFloat(valorInput.value);
+    if (descricaoInput.value.trim() === '' || isNaN(valor) || valor <= 0) {
+        alert('Por favor, preencha a descrição e um valor válido.');
+        return;
+    }
+
+    if (tipo === 'despesa') {
+        valor = -Math.abs(valor);
+    }
+    
+    if (isFixa && mesesInput.value > 0) {
+        const numeroDeMeses = parseInt(mesesInput.value);
+        const dataBase = new Date();
+
+        for (let i = 0; i < numeroDeMeses; i++) {
+            const dataParcela = new Date(dataBase);
+            dataParcela.setMonth(dataBase.getMonth() + i);
+
+            const novaTransacao = {
+                id: dataParcela.getTime(),
+                descricao: `${descricaoInput.value} (${i + 1}/${numeroDeMeses})`,
+                valor: valor,
+                categoria: categoriaInput.value,
+                cartaoCredito: isCartao,
+                observacoes: observacoesInput.value.trim()
+            };
+            transacoes.push(novaTransacao);
+        }
+    } else {
+        const novaTransacao = {
+            id: new Date().getTime(),
+            descricao: descricaoInput.value,
+            valor: valor,
+            categoria: categoriaInput.value,
+            cartaoCredito: isCartao,
+            observacoes: observacoesInput.value.trim()
+        };
+        transacoes.push(novaTransacao);
+    }
+
+    salvarTransacoes(transacoes);
+    atualizarTudo();
+    
+    btnAddTransacao.classList.add('btn-success');
+    btnAddTransacao.innerText = 'Adicionado ✔️';
+    
+    setTimeout(fecharModalTransacao, 1000);
+}
+
+function excluirTransacao(id) {
+    if (confirm('Tem certeza que deseja excluir esta transação?')) {
+        transacoes = transacoes.filter(t => t.id !== id);
+        salvarTransacoes(transacoes);
+        atualizarTudo();
+    }
+}
+
+
+// ===================================================================================
+// --- FUNÇÕES DE RENDERIZAÇÃO E UI (INTERFACE) ---
+// ===================================================================================
+
+function atualizarResumo(lista) {
+    const valores = lista.map(t => t.valor);
+    const receitas = valores.filter(v => v > 0).reduce((acc, v) => acc + v, 0);
+    const despesas = valores.filter(v => v < 0).reduce((acc, v) => acc + v, 0);
+    const saldo = receitas + despesas;
+
+    totalReceitasElement.innerText = `R$ ${receitas.toFixed(2)}`;
+    totalDespesasElement.innerText = `R$ ${Math.abs(despesas).toFixed(2)}`;
+    saldoTotalElement.innerText = `R$ ${saldo.toFixed(2)}`;
+    saldoTotalElement.classList.remove('receita', 'despesa');
+    saldoTotalElement.classList.add(saldo >= 0 ? 'receita' : 'despesa');
+}
+
+function renderizarListaAgrupadaPorDia(lista, elementoLista, comBotaoExcluir = false) {
+    elementoLista.innerHTML = '';
+    const listaOrdenada = [...lista].sort((a, b) => b.id - a.id);
+    if(listaOrdenada.length === 0) {
+        elementoLista.innerHTML = '<li>Nenhuma transação encontrada.</li>';
+        return;
+    }
+    const grupos = listaOrdenada.reduce((acc, transacao) => {
+        const data = new Date(transacao.id).toLocaleDateString('pt-BR');
+        if (!acc[data]) { acc[data] = []; }
+        acc[data].push(transacao);
+        return acc;
+    }, {});
+
+    for (const data in grupos) {
+        const dayGroup = document.createElement('div');
+        dayGroup.className = 'day-group';
+        const dateHeader = document.createElement('div');
+        dateHeader.className = 'date-header';
+        dateHeader.innerText = data;
+        dayGroup.appendChild(dateHeader);
+        grupos[data].forEach(transacao => {
+            const tipo = transacao.valor > 0 ? 'receita' : 'despesa';
+            const valorFormatado = `R$ ${Math.abs(transacao.valor).toFixed(2)}`;
+            const item = document.createElement('li');
+            item.classList.add(tipo);
+            item.innerHTML = `
+                <div class="transaction-info">
+                    <div class="transaction-details">
+                        <span>${transacao.descricao}</span>
+                    </div>
+                    ${transacao.observacoes ? `<p class="transaction-observation">${transacao.observacoes}</p>` : ''}
+                </div>
+                <div class="transaction-value">
+                    <span>${valorFormatado}</span>
+                    ${comBotaoExcluir ? `<button class="delete-btn" data-id="${transacao.id}">&times;</button>` : ''}
+                </div>
+            `;
+            dayGroup.appendChild(item);
+        });
+        elementoLista.appendChild(dayGroup);
+    }
+}
+
+function atualizarDashboard() {
+    const hoje = new Date();
+    const transacoesEfetivadas = transacoes.filter(t => new Date(t.id) <= hoje);
+    atualizarResumo(transacoesEfetivadas);
+    
+    const transacoesDoMesAtual = transacoes.filter(t => {
+        const dataTransacao = new Date(t.id);
+        return dataTransacao.getMonth() === hoje.getMonth() && dataTransacao.getFullYear() === hoje.getFullYear();
+    });
+    
+    const transacoesRecentesLimitadas = [...transacoesDoMesAtual].sort((a, b) => b.id - a.id).slice(0, 5);
+    renderizarListaAgrupadaPorDia(transacoesRecentesLimitadas, listaTransacoesRecentes, false);
+}
+
+function renderizarHistoricoCompleto() {
+    monthDisplay.innerText = dataVista.toLocaleString('pt-BR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase());
+    const mesAtual = dataVista.getMonth();
+    const anoAtual = dataVista.getFullYear();
+    const transacoesDoMes = transacoes.filter(t => {
+        const dataTransacao = new Date(t.id);
+        return dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual;
+    });
+    renderizarListaAgrupadaPorDia(transacoesDoMes, listaHistoricoCompleto, true);
+}
+
+function renderizarRelatorio() {
+    relatorioContainer.innerHTML = '';
+    const mesAtual = dataVista.getMonth();
+    const anoAtual = dataVista.getFullYear();
+    const despesasDoMes = transacoes.filter(t => {
+        const dataTransacao = new Date(t.id);
+        return t.valor < 0 && dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual;
+    });
+
+    if (despesasDoMes.length === 0) {
+        relatorioContainer.innerHTML = '<p>Nenhuma despesa encontrada para este mês.</p>';
+        return;
+    }
+
+    const gastosPorCategoria = despesasDoMes.reduce((acc, despesa) => {
+        const categoria = despesa.categoria || 'Outros';
+        if (!acc[categoria]) {
+            acc[categoria] = 0;
+        }
+        acc[categoria] += Math.abs(despesa.valor);
+        return acc;
+    }, {});
+
+    for (const categoria in gastosPorCategoria) {
+        const item = document.createElement('div');
+        item.className = 'category-report-item';
+        item.innerHTML = `
+            <span class="category-name">${categoria}</span>
+            <span class="category-total">R$ ${gastosPorCategoria[categoria].toFixed(2)}</span>
+        `;
+        relatorioContainer.appendChild(item);
+    }
+}
+
+function atualizarTudo() {
+    atualizarDashboard();
+    renderizarHistoricoCompleto();
+    renderizarRelatorio();
+}
+
+// ===================================================================================
+// --- FUNÇÕES DE NAVEGAÇÃO E MODAL ---
+// ===================================================================================
+function fecharMenu() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
+function abrirMenu() { sidebar.classList.add('open'); overlay.classList.add('active'); }
+
+function mostrarPagina(idDaPagina, titulo, subtitulo) {
+    todasAsPaginas.forEach(page => page.classList.add('hidden'));
+    document.getElementById(idDaPagina).classList.remove('hidden');
+    headerTitle.innerText = titulo;
+    headerSubtitle.innerText = subtitulo;
+    fabAddTransacao.classList.toggle('hidden', idDaPagina !== 'page-dashboard');
+}
+
+function abrirModalTransacao() {
+    formTransacao.reset();
+    btnAddTransacao.classList.remove('btn-success');
+    btnAddTransacao.innerText = 'Adicionar';
+    opcoesFixa.classList.add('hidden');
+    modalTransacao.classList.remove('hidden');
+}
+
+function fecharModalTransacao() { modalTransacao.classList.add('hidden'); }
+
+
+// ===================================================================================
+//--- EVENT LISTENERS (OUVINTES DE AÇÕES) ---
+// ===================================================================================
+menuToggleButton.addEventListener('click', () => sidebar.classList.contains('open') ? fecharMenu() : abrirMenu());
+overlay.addEventListener('click', fecharMenu);
+
+navDashboard.addEventListener('click', (e) => { e.preventDefault(); mostrarPagina('page-dashboard', 'Meu Painel', 'Resumo das suas finanças'); fecharMenu(); });
+navTransacoes.addEventListener('click', (e) => { e.preventDefault(); dataVista = new Date(); renderizarHistoricoCompleto(); mostrarPagina('page-transacoes', 'Histórico', 'Navegue pelas suas transações'); fecharMenu(); });
+navRelatorio.addEventListener('click', (e) => { e.preventDefault(); dataVista = new Date(); renderizarRelatorio(); mostrarPagina('page-relatorio', 'Relatório', 'Análise das suas despesas'); fecharMenu(); });
+navConfiguracoes.addEventListener('click', (e) => { e.preventDefault(); mostrarPagina('page-configuracoes', 'Configurações', 'Ajustes do aplicativo'); fecharMenu(); });
+
+prevMonthBtn.addEventListener('click', () => { dataVista.setMonth(dataVista.getMonth() - 1); renderizarHistoricoCompleto(); renderizarRelatorio(); });
+nextMonthBtn.addEventListener('click', () => { dataVista.setMonth(dataVista.getMonth() + 1); renderizarHistoricoCompleto(); renderizarRelatorio(); });
+
+fabAddTransacao.addEventListener('click', abrirModalTransacao);
+closeModalBtn.addEventListener('click', fecharModalTransacao);
+modalTransacao.addEventListener('click', (e) => { if (e.target === modalTransacao) fecharModalTransacao(); });
+formTransacao.addEventListener('submit', processarNovaTransacao);
+
+checkTransacaoFixa.addEventListener('change', () => { opcoesFixa.classList.toggle('hidden', !checkTransacaoFixa.checked); });
+
+listaHistoricoCompleto.addEventListener('click', (e) => {
+    if (e.target.classList.contains('delete-btn')) {
+        const id = parseInt(e.target.dataset.id);
+        excluirTransacao(id);
+    }
+});
+
+// ===================================================================================
+// --- INICIALIZAÇÃO DO APP ---
+// ===================================================================================
+function init() {
+    mostrarPagina('page-dashboard', 'Meu Painel', 'Resumo das suas finanças');
+    atualizarTudo();
+}
+
+init();
+/* Adicione este código ao FINAL do seu arquivo style.css */
+
+/* --- Estilos da Barra Lateral (Sidebar) --- */
+.settings-icon-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+.settings-icon-container:hover {
+    opacity: 1;
+}
+.settings-icon-container svg {
+    stroke: #fff;
+}
+
+
+/* --- Estilos Melhorados para o Seletor de Categoria --- */
+.form-control select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    padding-right: 2.5rem; /* Deixa espaço para a seta */
+}
+/* ======================================================= */
+/* --- CORREÇÕES E REFINAMENTOS VISUAIS --- */
+/* ======================================================= */
+
+/* --- 1. Botão de Excluir Mais Bonito --- */
+.transaction-value {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre o valor e o botão X */
+}
+
+.transacoes li:hover .delete-btn {
+    opacity: 1; /* Garante que o botão apareça ao passar o mouse na linha */
+}
+
+
+/* --- 2. Posição do Botão de Configuração (Canto Inferior Esquerdo) --- */
+.settings-icon-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px; /* ALTERADO DE 'right' PARA 'left' */
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+
+/* --- 3. Ajuste de Espaçamento e Borda no Resumo do Dashboard --- */
+.resumo-card:not(:last-child) {
+    padding-right: 10px; /* Diminui o espaçamento */
+}
+.resumo-card:not(:first-child) {
+    padding-left: 10px; /* Diminui o espaçamento */
+}
+/* ======================================================= */
+/* --- ESTILOS DO MODAL DE CONFIRMAÇÃO --- */
+/* ======================================================= */
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-content p {
+    margin-top: 10px;
+    color: var(--cor-texto-leve);
+}
+
+.btn.btn-secondary {
+    background-color: transparent;
+    border: 2px solid var(--cor-borda);
+    color: var(--cor-texto-leve);
+}
+
+.btn.btn-secondary:hover {
+    background-color: var(--cor-fundo);
+    border-color: var(--cor-texto-leve);
+}
+
+.btn.btn-danger {
+    background-color: var(--cor-despesa);
+}
+
+.btn.btn-danger:hover {
+    background-color: #cc0000; /* Um vermelho mais escuro */
+}
+/* ======================================================= */
+/* --- ESTILOS DO SELETOR DE CATEGORIA CUSTOMIZADO --- */
+/* ======================================================= */
+
+.custom-select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--cor-borda);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+}
+
+.lista-selecao {
+    list-style: none;
+    margin-top: 20px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.lista-selecao li {
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.lista-selecao li:hover {
+    background-color: var(--cor-fundo);
+}
+/* ======================================================= */
+/* --- ESTILOS DA PÁGINA DE RELATÓRIO E GRÁFICO --- */
+/* ======================================================= */
+
+.chart-container {
+    position: relative;
+    max-width: 450px;
+    margin: 20px auto;
+}
+
+#relatorio-lista-categorias {
+    margin-top: 30px;
+}
+/* ======================================================= */
+/* --- ESTILOS DO MODAL DE DETALHES DA CATEGORIA --- */
+/* ======================================================= */
+
+#lista-detalhes-categoria li {
+    cursor: pointer;
+}
+/* ======================================================= */
+/* --- ESTILOS DO MODAL DE OBSERVAÇÃO --- */
+/* ======================================================= */
+
+.texto-modal {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    white-space: pre-wrap; /* Respeita as quebras de linha do texto */
+    word-wrap: break-word; /* Quebra palavras longas para não estourar o layout */
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* ======================================================= */
+/* --- CORREÇÕES E REFINAMENTOS VISUAIS --- */
+/* ======================================================= */
+
+/* ... (as outras correções permanecem) ... */
+
+/* --- 1. Botão de Excluir Mais Bonito --- */
+.transaction-value { display: flex; align-items: center; gap: 10px; }
+
+/* ESTILO COMBINADO PARA AMBOS OS BOTÕES */
+.edit-btn, .delete-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s ease;
+    font-size: 20px;
+    padding: 0 2px;
+    vertical-align: middle;
+}
+
+.edit-btn:hover, .delete-btn:hover {
+    opacity: 1;
+    transform: scale(1.2); /* Apenas aumenta de tamanho */
+}
+
+.edit-btn {
+    color: var(--cor-primaria);
+    margin-right: 5px;
+}
+
+.delete-btn {
+    color: var(--cor-despesa);
+}
+
+.transacoes li:hover .edit-btn,
+.transacoes li:hover .delete-btn {
+    opacity: 1;
+}
+
+/* ... (o resto do seu CSS) ... */
+/* ======================================================= */
+/* --- ESTILOS DA BUSCA E FILTROS --- */
+/* ======================================================= */
+
+.filtros-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.campo-busca {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--cor-borda);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+.botoes-filtro {
+    display: flex;
+    border: 1px solid var(--cor-primaria);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.filtro-btn {
+    padding: 10px 15px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: var(--cor-primaria);
+    transition: all 0.2s ease;
+}
+
+.filtro-btn:not(:last-child) {
+    border-right: 1px solid var(--cor-primaria);
+}
+
+.filtro-btn.active {
+    background-color: var(--cor-primaria);
+    color: white;
+}
+/* ======================================================= */
+/* --- ESTILOS DOS ORÇAMENTOS --- */
+/* ======================================================= */
+
+#form-orcamentos {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.orcamento-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.orcamento-item label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.orcamento-item input {
+    padding: 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+#btn-salvar-orcamentos {
+    margin-top: 20px;
+    width: auto;
+    padding: 12px 30px;
+}
+
+/* --- Barras de Progresso --- */
+.progresso-container {
+    margin-bottom: 15px;
+}
+.progresso-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+.progresso-categoria {
+    font-weight: 600;
+}
+.progresso-valores {
+    color: var(--cor-texto-leve);
+}
+.barra-fundo {
+    background-color: #eee;
+    border-radius: 10px;
+    height: 10px;
+    width: 100%;
+    overflow: hidden;
+}
+.barra-progresso {
+    background-color: var(--cor-primaria);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out;
+}
+.barra-progresso.alerta {
+    background-color: #f1c40f; /* Amarelo */
+}
+.barra-progresso.estourado {
+    background-color: var(--cor-despesa); /* Vermelho */
+}
+/* ======================================================= */
+/* --- ESTILOS DA PÁGINA DE FATURA --- */
+/* ======================================================= */
+
+.fatura-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.fatura-config {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fatura-config label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.fatura-config input {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+}
+
+.btn.btn-small {
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+.valor-info {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--cor-texto);
+}
+/* ======================================================= */
+/* --- ESTILOS DA PÁGINA DE CONFIGURAÇÕES --- */
+/* ======================================================= */
+
+/* Painel Sanfona (Collapsible) */
+.collapsible-header {
+    cursor: pointer;
+    position: relative;
+}
+.collapsible-header::after {
+    content: '▼';
+    position: absolute;
+    right: 0;
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+.collapsible.open .collapsible-header::after {
+    transform: rotate(180deg);
+}
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+.collapsible.open .collapsible-content {
+    max-height: 1000px; /* Um valor alto para permitir expansão */
+    padding-top: 15px;
+}
+
+/* Gerenciador de Categorias */
+.gerenciar-categorias-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.coluna-categorias {
+    flex: 1;
+    min-width: 250px;
+}
+.coluna-categorias h3 {
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--cor-borda);
+    padding-bottom: 5px;
+}
+.lista-gerenciavel {
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+.lista-gerenciavel li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 5px;
+    border-radius: 4px;
+}
+.lista-gerenciavel li:nth-child(odd) {
+    background-color: var(--cor-fundo);
+}
+.btn-remover-categoria {
+    background: transparent;
+    border: none;
+    color: var(--cor-despesa);
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.5;
+    transition: all 0.2s ease;
+}
+.lista-gerenciavel li:hover .btn-remover-categoria {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.add-categoria-form {
+    display: flex;
+    margin-top: 10px;
+}
+.add-categoria-form input {
+    flex: 1;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px 0 0 8px;
+    padding: 8px;
+}
+.add-categoria-form button {
+    border: 1px solid var(--cor-primaria);
+    border-left: none;
+    background-color: var(--cor-primaria);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    padding: 0 12px;
+}
